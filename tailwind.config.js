@@ -7,6 +7,14 @@ export default {
   theme: {
     extend: {
       colors: {
+        surface: '#fcfcfc',
+        'surface-dark': '#0a0a0a',
+        ink: '#111111',
+        'ink-strong': '#1a1a1a',
+        'border-light': '#d1d5db',
+        'border-dark': '#1f2937',
+        muted: '#6b7280',
+        'muted-dark': '#9ca3af',
         brand: {
           50: '#ecfdf5',
           100: '#d1fae5',
@@ -29,6 +37,14 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+      },
+      transitionTimingFunction: {
+        signature: 'cubic-bezier(0.16, 1, 0.3, 1)',
+      },
+      transitionDuration: {
+        hover: '300ms',
+        slide: '700ms',
       },
       boxShadow: {
         'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',

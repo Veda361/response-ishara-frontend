@@ -4,15 +4,15 @@ import type { AnalyticsOverview, AnalyticsFilterQuery } from '../../types/analyt
 import { AdminNavbar } from '../../components/admin/AdminNavbar';
 import { KpiCard } from '../../components/admin/KpiCard';
 import { AnalyticsCharts } from '../../components/admin/AnalyticsCharts';
+import { SectionLabel } from '../../components/common/SectionLabel';
+import { PillButton } from '../../components/common/PillButton';
 import { formatEnum } from '../../utils/formatters';
 import {
   Users,
   CheckCircle,
   AlertTriangle,
   Clock,
-  Filter,
   RefreshCw,
-  Loader2,
   AlertCircle,
 } from 'lucide-react';
 
@@ -64,103 +64,121 @@ export const AdminDashboardPage: React.FC = () => {
   const topProblem = topProblemEntry ? formatEnum(topProblemEntry[0]) : '—';
 
   return (
-    <div className="min-h-screen bg-slate-50/60 pb-16">
+    <div className="min-h-screen bg-[#fcfcfc] pb-20">
       <AdminNavbar />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-8">
-        {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Executive Analytics Overview
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Live data aggregation computed directly via MongoDB pipelines on Render
-            </p>
-          </div>
+      {/* Section 3B: Dark Section Header Band */}
+      <section className="bg-[#0a0a0a] text-white border-b border-neutral-800 py-12 md:py-16">
+        <div className="mx-auto max-w-7xl px-6 md:px-12">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-3">
+              <SectionLabel number="01" label="EXECUTIVE RESEARCH HUB" theme="dark" />
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-white font-sans">
+                Curated Transit Telemetry &amp; Intelligence
+              </h1>
+              <p className="text-xs sm:text-sm text-neutral-400 font-mono max-w-2xl">
+                Aggregated commute bottlenecks, wait times, and verification demand processed live from verified student responses.
+              </p>
+            </div>
 
-          <button
-            type="button"
-            onClick={fetchAnalytics}
-            disabled={loading}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${loading ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
-          </button>
+            {/* Real Data Status Pill Row (Section 3B) */}
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 border border-neutral-700 bg-neutral-900 text-neutral-300">
+                TOTAL LOGS: {total}
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 border border-neutral-700 bg-neutral-900 text-neutral-300">
+                PILOT INTEREST: {pilotRate}
+              </span>
+              <button
+                type="button"
+                onClick={fetchAnalytics}
+                disabled={loading}
+                className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 border border-white bg-white text-black hover:bg-neutral-200 transition-colors disabled:opacity-50 select-none cursor-pointer"
+              >
+                <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
+                <span>SYNC</span>
+              </button>
+            </div>
+          </div>
         </div>
+      </section>
 
-        {/* Filter Toolbar */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm mb-8 flex flex-col sm:flex-row items-center gap-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider shrink-0">
-            <Filter className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Filter By:</span>
+      {/* Main Body */}
+      <main className="mx-auto max-w-7xl px-6 md:px-12 pt-10">
+        {/* Filter Controls Bar */}
+        <div className="border border-neutral-300 bg-white p-4 sm:p-5 mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <SectionLabel number="FLT" label="TELEMETRY FILTERS" />
           </div>
 
-          <div className="flex flex-1 w-full sm:w-auto gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <input
               type="text"
-              placeholder="College name (regex search)..."
+              placeholder="Search college corridor..."
               value={collegeFilter}
               onChange={(e) => setCollegeFilter(e.target.value)}
-              className="w-full sm:w-64 rounded-xl border border-slate-200 px-3 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none"
+              className="border border-neutral-300 bg-[#fcfcfc] px-3.5 py-1.5 font-mono text-xs text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-900 focus:outline-none w-full sm:w-64"
             />
 
             <select
               value={yearFilter}
               onChange={(e) => setYearFilter(e.target.value)}
-              className="rounded-xl border border-slate-200 px-3 py-1.5 text-xs text-slate-900 bg-white focus:border-emerald-500 focus:outline-none"
+              className="border border-neutral-300 bg-[#fcfcfc] px-3 py-1.5 font-mono text-xs text-neutral-900 focus:border-neutral-900 focus:outline-none"
             >
-              <option value="">All Years of Study</option>
-              <option value="1st Year">1st Year</option>
-              <option value="2nd Year">2nd Year</option>
-              <option value="3rd Year">3rd Year</option>
-              <option value="4th Year">4th Year</option>
-              <option value="Postgraduate">Postgraduate</option>
+              <option value="">ALL STUDY YEARS</option>
+              <option value="1st Year">1ST YEAR</option>
+              <option value="2nd Year">2ND YEAR</option>
+              <option value="3rd Year">3RD YEAR</option>
+              <option value="4th Year">4TH YEAR</option>
+              <option value="Postgraduate">POSTGRADUATE</option>
             </select>
-          </div>
 
-          {(collegeFilter || yearFilter) && (
-            <button
-              type="button"
-              onClick={() => {
-                setCollegeFilter('');
-                setYearFilter('');
-              }}
-              className="text-xs text-rose-600 hover:underline shrink-0"
-            >
-              Reset Filters
-            </button>
-          )}
+            {(collegeFilter || yearFilter) && (
+              <PillButton
+                onClick={() => {
+                  setCollegeFilter('');
+                  setYearFilter('');
+                }}
+                size="sm"
+              >
+                RESET
+              </PillButton>
+            )}
+          </div>
         </div>
 
-        {/* Loading Skeleton */}
+        {/* Loading State: Thin skeleton bars + [ LOADING ] */}
         {loading && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="flex items-center justify-center py-4">
+              <span className="font-mono text-xs uppercase tracking-[0.25em] text-neutral-400 animate-pulse">
+                [ LOADING AGGREGATED TELEMETRY ]
+              </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-28 rounded-2xl bg-white border border-slate-200 p-5 animate-pulse" />
+                <div key={i} className="h-32 border border-neutral-200 bg-neutral-100 animate-pulse" />
               ))}
             </div>
-            <div className="h-96 rounded-2xl bg-white border border-slate-200 p-8 flex items-center justify-center">
-              <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
-            </div>
+            <div className="h-80 border border-neutral-200 bg-neutral-100 animate-pulse" />
           </div>
         )}
 
         {/* Error State */}
         {!loading && error && (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center text-rose-800 my-8">
-            <AlertCircle className="mx-auto w-8 h-8 text-rose-600 mb-2" />
-            <h3 className="font-bold text-base mb-1">Failed to Load Backend Analytics</h3>
-            <p className="text-xs text-rose-700 mb-4">{error}</p>
+          <div className="border border-neutral-900 bg-neutral-900 text-white p-8 text-center my-8">
+            <AlertCircle className="mx-auto w-8 h-8 text-neutral-300 mb-3" />
+            <h3 className="font-mono text-sm uppercase tracking-[0.2em] mb-1">
+              [ TELEMETRY PIPELINE ERROR ]
+            </h3>
+            <p className="text-xs font-mono text-neutral-400 mb-4">{error}</p>
             <button
               type="button"
               onClick={fetchAnalytics}
-              className="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2 text-xs font-semibold text-white hover:bg-rose-700"
+              className="inline-flex items-center gap-2 border border-white bg-white text-black px-4 py-2 font-mono text-xs uppercase tracking-wider hover:bg-neutral-200 transition-colors"
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span>Retry Request</span>
+              <span>RETRY TRANSMISSION</span>
             </button>
           </div>
         )}
@@ -168,44 +186,50 @@ export const AdminDashboardPage: React.FC = () => {
         {/* Real Data Render */}
         {!loading && !error && data && (
           <>
-            {/* KPI Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {/* KPI Tiles (Right-Sidebar Stat Format) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
               <KpiCard
-                title="Total Responses"
+                index="01"
+                title="Total Telemetry Logs"
                 value={total}
-                subtitle="Students surveyed"
-                icon={<Users className="w-4 h-4 text-emerald-600" />}
+                subtitle="Individual student responses"
+                icon={<Users className="w-4 h-4" />}
               />
 
               <KpiCard
-                title="Pilot Opt-in Rate"
+                index="02"
+                title="Pilot Enrollment"
                 value={pilotRate}
-                subtitle={`${pilotOptIns} students joined pilot`}
-                icon={<CheckCircle className="w-4 h-4 text-indigo-600" />}
+                subtitle={`${pilotOptIns} respondents opted in`}
+                icon={<CheckCircle className="w-4 h-4" />}
               />
 
               <KpiCard
-                title="Primary Commute Mode"
+                index="03"
+                title="Primary Mode"
                 value={topTravelMode}
-                subtitle="Most frequent mode"
-                icon={<Clock className="w-4 h-4 text-amber-600" />}
+                subtitle="Most frequent commute mode"
+                icon={<Clock className="w-4 h-4" />}
               />
 
               <KpiCard
-                title="Top Bottleneck"
+                index="04"
+                title="Top Friction Point"
                 value={topProblem}
-                subtitle="Biggest student problem"
-                icon={<AlertTriangle className="w-4 h-4 text-rose-600" />}
+                subtitle="Dominant student complaint"
+                icon={<AlertTriangle className="w-4 h-4" />}
               />
             </div>
 
             {/* Empty State */}
             {total === 0 ? (
-              <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-12 text-center my-8">
-                <span className="text-4xl">📊</span>
-                <h3 className="mt-4 text-lg font-bold text-slate-900">No Survey Responses Recorded Yet</h3>
-                <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
-                  Take the survey from the public landing page or share the link with college students to see live analytics populated here.
+              <div className="border border-dashed border-neutral-400 bg-white p-16 text-center my-8">
+                <SectionLabel number="EMP" label="DATASET EMPTY" className="mb-3" />
+                <h3 className="text-lg font-normal text-neutral-900 font-sans">
+                  No Telemetry Records Found
+                </h3>
+                <p className="font-mono text-xs text-neutral-500 max-w-md mx-auto mt-2">
+                  Submit responses via the public survey portal to populate this live executive research matrix.
                 </p>
               </div>
             ) : (
@@ -213,7 +237,7 @@ export const AdminDashboardPage: React.FC = () => {
             )}
           </>
         )}
-      </div>
+      </main>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import React from 'react';
-import { ArrowLeft, ArrowRight, Loader2, Send } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Send } from 'lucide-react';
+import { CTAButton } from '../common/CTAButton';
 
 interface SurveyNavigationProps {
   canGoBack: boolean;
@@ -9,6 +10,7 @@ interface SurveyNavigationProps {
   isSubmitting?: boolean;
   canProceed?: boolean;
   nextButtonText?: string;
+  theme?: 'light' | 'dark';
 }
 
 export const SurveyNavigation: React.FC<SurveyNavigationProps> = ({
@@ -19,52 +21,54 @@ export const SurveyNavigation: React.FC<SurveyNavigationProps> = ({
   isSubmitting = false,
   canProceed = true,
   nextButtonText,
+  theme = 'light',
 }) => {
   return (
-    <div className="flex items-center justify-between pt-6 border-t border-slate-200/80 mt-8 gap-4">
+    <div
+      className={`flex items-center justify-between pt-8 border-t mt-10 gap-4 ${
+        theme === 'dark' ? 'border-neutral-800' : 'border-neutral-200'
+      }`}
+    >
       {canGoBack ? (
-        <button
+        <CTAButton
           type="button"
           onClick={onBack}
           disabled={isSubmitting}
-          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 active:scale-[0.98] transition-all disabled:opacity-50"
+          variant="secondary"
+          size="sm"
+          icon={<ArrowLeft className="w-3.5 h-3.5" />}
+          iconPosition="left"
         >
-          <ArrowLeft className="w-4 h-4" />
-          Back
-        </button>
+          PREVIOUS
+        </CTAButton>
       ) : (
         <div />
       )}
 
-      <button
+      <CTAButton
         type="button"
         onClick={onNext}
         disabled={!canProceed || isSubmitting}
-        className={`inline-flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all active:scale-[0.98] ${
-          !canProceed || isSubmitting
-            ? 'bg-slate-300 cursor-not-allowed opacity-70'
-            : isLastStep
-            ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20'
-            : 'bg-slate-900 hover:bg-slate-800'
-        }`}
+        loading={isSubmitting}
+        variant={theme === 'dark' ? 'dark' : 'primary'}
+        size="md"
+        icon={
+          isLastStep ? (
+            <Send className="w-3.5 h-3.5" />
+          ) : (
+            <ArrowRight className="w-3.5 h-3.5" />
+          )
+        }
+        iconPosition="right"
       >
-        {isSubmitting ? (
-          <>
-            <Loader2 className="w-4 h-4 animate-spin" />
-            Submitting Response...
-          </>
-        ) : isLastStep ? (
-          <>
-            <span>Submit Survey</span>
-            <Send className="w-4 h-4" />
-          </>
-        ) : (
-          <>
-            <span>{nextButtonText || 'Continue'}</span>
-            <ArrowRight className="w-4 h-4" />
-          </>
-        )}
-      </button>
+        {isSubmitting
+          ? 'SAVING RESPONSE...'
+          : isLastStep
+          ? 'SUBMIT SURVEY'
+          : nextButtonText
+          ? nextButtonText.toUpperCase()
+          : 'CONTINUE'}
+      </CTAButton>
     </div>
   );
 };

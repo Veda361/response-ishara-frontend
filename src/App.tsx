@@ -14,7 +14,7 @@ export const App: React.FC = () => {
   return (
     <AuthProvider>
       <Router>
-        <div className="flex min-h-screen flex-col bg-slate-50 text-slate-900">
+        <div className="flex min-h-screen flex-col bg-[#fcfcfc] text-neutral-950">
           <Routes>
             {/* Student Survey is the primary root experience */}
             <Route

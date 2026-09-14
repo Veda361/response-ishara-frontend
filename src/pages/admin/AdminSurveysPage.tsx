@@ -4,6 +4,8 @@ import type { ISurveyResponse, SurveyListQuery } from '../../types/survey';
 import type { PaginationMeta } from '../../types/api';
 import { AdminNavbar } from '../../components/admin/AdminNavbar';
 import { SurveyDetailModal } from '../../components/admin/SurveyDetailModal';
+import { SectionLabel } from '../../components/common/SectionLabel';
+import { PillButton } from '../../components/common/PillButton';
 import { formatEnum, formatDate } from '../../utils/formatters';
 import {
   Search,
@@ -12,7 +14,6 @@ import {
   ChevronLeft,
   ChevronRight,
   RefreshCw,
-  Loader2,
   AlertCircle,
   Building2,
 } from 'lucide-react';
@@ -30,7 +31,6 @@ export const AdminSurveysPage: React.FC = () => {
 
   // Filters
   const [search, setSearch] = useState<string>('');
-  const [college, setCollege] = useState<string>('');
   const [wouldTryIsahara, setWouldTryIsahara] = useState<string>('');
   const [interestedInPilot, setInterestedInPilot] = useState<string>('');
   const [page, setPage] = useState<number>(1);
@@ -48,7 +48,6 @@ export const AdminSurveysPage: React.FC = () => {
         limit: 10,
       };
       if (search.trim()) query.search = search.trim();
-      if (college.trim()) query.college = college.trim();
       if (wouldTryIsahara) query.wouldTryIsahara = wouldTryIsahara;
       if (interestedInPilot !== '') query.interestedInPilot = interestedInPilot === 'true';
 
@@ -64,21 +63,20 @@ export const AdminSurveysPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, college, wouldTryIsahara, interestedInPilot, search]);
+  }, [page, wouldTryIsahara, interestedInPilot, search]);
 
   useEffect(() => {
     fetchSurveys();
   }, [fetchSurveys]);
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to permanently delete this survey response?')) {
+    if (!window.confirm('Are you sure you want to permanently delete this telemetry record?')) {
       return;
     }
 
     setDeletingId(id);
     try {
       await adminApi.deleteSurvey(id);
-      // Remove locally or refresh
       setSurveys((prev: ISurveyResponse[]) => prev.filter((s) => s._id !== id));
       setPagination((prev: PaginationMeta) => ({ ...prev, total: Math.max(0, prev.total - 1) }));
     } catch (err) {
@@ -90,17 +88,18 @@ export const AdminSurveysPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/60 pb-16">
+    <div className="min-h-screen bg-[#fcfcfc] pb-20">
       <AdminNavbar />
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-8">
+      <main className="mx-auto max-w-7xl px-6 md:px-12 pt-10">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-              Survey Responses
+            <SectionLabel number="02" label="SURVEY RESPONSE ARCHIVE" className="mb-2" />
+            <h1 className="text-2xl sm:text-3xl font-normal text-neutral-950 tracking-tight font-sans">
+              Respondent Telemetry Dataset
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs font-mono text-neutral-500 uppercase tracking-wider mt-1">
               Browsing {pagination.total} individual student submissions
             </p>
           </div>
@@ -109,160 +108,218 @@ export const AdminSurveysPage: React.FC = () => {
             type="button"
             onClick={fetchSurveys}
             disabled={loading}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50"
+            className="inline-flex items-center gap-2 border border-neutral-300 bg-white px-3.5 py-2 font-mono text-xs uppercase tracking-wider text-neutral-700 hover:border-neutral-900 transition-colors disabled:opacity-50 select-none cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${loading ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
+            <RefreshCw className={`w-3.5 h-3.5 text-neutral-500 ${loading ? 'animate-spin' : ''}`} />
+            <span>SYNC DATASET</span>
           </button>
         </div>
 
-        {/* Filter & Search Bar */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm mb-6 flex flex-col md:flex-row items-center gap-3">
-          {/* Search */}
-          <div className="relative w-full md:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search name, college, year..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 pl-9 pr-3 py-1.5 text-xs text-slate-900 placeholder:text-slate-400 focus:border-emerald-500 focus:outline-none"
-            />
+        {/* Section 2C Action Pills & Filter Row */}
+        <div className="border border-neutral-300 bg-white p-5 mb-8 space-y-4">
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            {/* Search Input */}
+            <div className="relative w-full md:w-80">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+              <input
+                type="text"
+                placeholder="SEARCH NAME, CORRIDOR, YEAR..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full border border-neutral-300 bg-[#fcfcfc] pl-10 pr-3.5 py-2 font-mono text-xs text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-900 focus:outline-none"
+              />
+            </div>
+
+            {/* Action Pills: Adoption Intent (Section 2C) */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400 mr-1">
+                ADOPTION:
+              </span>
+              <PillButton
+                size="sm"
+                active={wouldTryIsahara === ''}
+                onClick={() => {
+                  setWouldTryIsahara('');
+                  setPage(1);
+                }}
+              >
+                ALL
+              </PillButton>
+              <PillButton
+                size="sm"
+                active={wouldTryIsahara === 'definitely'}
+                onClick={() => {
+                  setWouldTryIsahara('definitely');
+                  setPage(1);
+                }}
+              >
+                DEFINITELY
+              </PillButton>
+              <PillButton
+                size="sm"
+                active={wouldTryIsahara === 'probably'}
+                onClick={() => {
+                  setWouldTryIsahara('probably');
+                  setPage(1);
+                }}
+              >
+                PROBABLY
+              </PillButton>
+              <PillButton
+                size="sm"
+                active={wouldTryIsahara === 'maybe'}
+                onClick={() => {
+                  setWouldTryIsahara('maybe');
+                  setPage(1);
+                }}
+              >
+                MAYBE
+              </PillButton>
+            </div>
+
+            {/* Action Pills: Pilot Status */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-400 mr-1">
+                PILOT:
+              </span>
+              <PillButton
+                size="sm"
+                active={interestedInPilot === ''}
+                onClick={() => {
+                  setInterestedInPilot('');
+                  setPage(1);
+                }}
+              >
+                ALL
+              </PillButton>
+              <PillButton
+                size="sm"
+                active={interestedInPilot === 'true'}
+                onClick={() => {
+                  setInterestedInPilot('true');
+                  setPage(1);
+                }}
+              >
+                OPTED IN
+              </PillButton>
+              <PillButton
+                size="sm"
+                active={interestedInPilot === 'false'}
+                onClick={() => {
+                  setInterestedInPilot('false');
+                  setPage(1);
+                }}
+              >
+                OPTED OUT
+              </PillButton>
+            </div>
+
+            {(search || wouldTryIsahara || interestedInPilot) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch('');
+                  setWouldTryIsahara('');
+                  setInterestedInPilot('');
+                  setPage(1);
+                }}
+                className="font-mono text-xs uppercase tracking-wider text-neutral-500 hover:text-neutral-900 underline ml-auto"
+              >
+                RESET
+              </button>
+            )}
           </div>
-
-          {/* Adoption Filter */}
-          <select
-            value={wouldTryIsahara}
-            onChange={(e) => {
-              setWouldTryIsahara(e.target.value);
-              setPage(1);
-            }}
-            className="w-full md:w-auto rounded-xl border border-slate-200 px-3 py-1.5 text-xs text-slate-900 bg-white focus:border-emerald-500 focus:outline-none"
-          >
-            <option value="">All Adoption Intent</option>
-            <option value="definitely">Definitely</option>
-            <option value="probably">Probably</option>
-            <option value="maybe">Maybe</option>
-            <option value="probably_not">Probably not</option>
-            <option value="definitely_not">Definitely not</option>
-          </select>
-
-          {/* Pilot Opt-in Filter */}
-          <select
-            value={interestedInPilot}
-            onChange={(e) => {
-              setInterestedInPilot(e.target.value);
-              setPage(1);
-            }}
-            className="w-full md:w-auto rounded-xl border border-slate-200 px-3 py-1.5 text-xs text-slate-900 bg-white focus:border-emerald-500 focus:outline-none"
-          >
-            <option value="">All Pilot Status</option>
-            <option value="true">Opted into Pilot</option>
-            <option value="false">Did Not Opt In</option>
-          </select>
-
-          {(search || college || wouldTryIsahara || interestedInPilot) && (
-            <button
-              type="button"
-              onClick={() => {
-                setSearch('');
-                setCollege('');
-                setWouldTryIsahara('');
-                setInterestedInPilot('');
-                setPage(1);
-              }}
-              className="text-xs text-rose-600 hover:underline shrink-0"
-            >
-              Reset Filters
-            </button>
-          )}
         </div>
 
         {/* Error State */}
         {error && (
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-center text-rose-800 my-6">
-            <AlertCircle className="mx-auto w-6 h-6 text-rose-600 mb-2" />
-            <h3 className="font-bold text-sm">Error Loading Survey Records</h3>
-            <p className="text-xs text-rose-700 mt-1">{error}</p>
+          <div className="border border-neutral-900 bg-neutral-900 text-white p-6 my-6">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-neutral-300" />
+              <div>
+                <h3 className="font-mono text-xs uppercase tracking-wider">Failed to Load Records</h3>
+                <p className="font-mono text-xs text-neutral-400 mt-0.5">{error}</p>
+              </div>
+            </div>
           </div>
         )}
 
         {/* Responses Table */}
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="border border-neutral-300 bg-white">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50/75 text-slate-500 font-bold uppercase tracking-wider">
-                  <th className="py-3 px-4">Student & College</th>
-                  <th className="py-3 px-4">Commute Mode</th>
-                  <th className="py-3 px-4">Wait Time</th>
-                  <th className="py-3 px-4">Biggest Bottleneck</th>
-                  <th className="py-3 px-4">Adoption Intent</th>
-                  <th className="py-3 px-4">Pilot Opt-in</th>
-                  <th className="py-3 px-4">Submitted</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                <tr className="border-b border-neutral-300 bg-neutral-100 font-mono text-[10px] uppercase tracking-[0.2em] text-neutral-600">
+                  <th className="py-3.5 px-4">STUDENT &amp; CORRIDOR</th>
+                  <th className="py-3.5 px-4">COMMUTE MODE</th>
+                  <th className="py-3.5 px-4">WAIT TIME</th>
+                  <th className="py-3.5 px-4">BOTTLENECK</th>
+                  <th className="py-3.5 px-4">ADOPTION</th>
+                  <th className="py-3.5 px-4">PILOT</th>
+                  <th className="py-3.5 px-4">SUBMITTED</th>
+                  <th className="py-3.5 px-4 text-right">ACTIONS</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-neutral-200">
                 {loading && (
                   <tr>
-                    <td colSpan={8} className="py-12 text-center text-slate-400">
-                      <Loader2 className="mx-auto w-6 h-6 animate-spin text-emerald-600 mb-2" />
-                      <span>Fetching survey responses from backend...</span>
+                    <td colSpan={8} className="py-16 text-center">
+                      <span className="font-mono text-xs uppercase tracking-[0.25em] text-neutral-400 animate-pulse">
+                        [ FETCHING RECORDS FROM MONGODB ]
+                      </span>
                     </td>
                   </tr>
                 )}
 
                 {!loading && surveys.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="py-12 text-center text-slate-500">
-                      <div className="text-2xl mb-1">📋</div>
-                      <p className="font-bold text-sm text-slate-700">No responses match the current query</p>
-                      <p className="text-xs text-slate-400 mt-0.5">Try adjusting your search or filters.</p>
+                    <td colSpan={8} className="py-16 text-center">
+                      <SectionLabel number="00" label="NO MATCHING RESPONSES" className="mb-2" />
+                      <p className="font-mono text-xs text-neutral-500 uppercase tracking-wider">
+                        Adjust filter parameters or query string
+                      </p>
                     </td>
                   </tr>
                 )}
 
                 {!loading &&
                   surveys.map((survey: ISurveyResponse) => (
-                    <tr key={survey._id} className="hover:bg-slate-50/80 transition-colors">
+                    <tr key={survey._id} className="hover:bg-neutral-50 transition-colors">
                       {/* Student & College */}
-                      <td className="py-3 px-4">
-                        <div className="font-semibold text-slate-900">
-                          {survey.student?.name || 'Anonymous'}
+                      <td className="py-3.5 px-4">
+                        <div className="font-medium text-neutral-950 font-mono text-xs">
+                          {survey.student?.name || 'ANONYMOUS'}
                         </div>
-                        <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
-                          <Building2 className="w-3 h-3 text-slate-400 shrink-0" />
-                          <span className="truncate max-w-[150px]">{survey.student?.college}</span>
+                        <div className="text-[11px] text-neutral-500 font-mono flex items-center gap-1.5 mt-0.5">
+                          <Building2 className="w-3 h-3 text-neutral-400 shrink-0" />
+                          <span className="truncate max-w-[170px] uppercase">{survey.student?.college}</span>
                         </div>
                       </td>
 
                       {/* Commute Mode */}
-                      <td className="py-3 px-4 text-slate-700">
+                      <td className="py-3.5 px-4 font-mono text-[11px] text-neutral-700 uppercase">
                         {formatEnum(survey.travel?.usualTravelMode)}
                       </td>
 
                       {/* Wait Time */}
-                      <td className="py-3 px-4 text-slate-700">
+                      <td className="py-3.5 px-4 font-mono text-[11px] text-neutral-700 uppercase">
                         {formatEnum(survey.travel?.longestWait)}
                       </td>
 
                       {/* Biggest Bottleneck */}
-                      <td className="py-3 px-4 text-slate-700">
-                        <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 text-[11px] font-medium inline-block">
+                      <td className="py-3.5 px-4">
+                        <span className="px-2 py-0.5 border border-neutral-300 bg-neutral-50 font-mono text-[10px] uppercase tracking-wider text-neutral-800 inline-block">
                           {formatEnum(survey.biggestProblem)}
                         </span>
                       </td>
 
                       {/* Adoption Intent */}
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4">
                         <span
-                          className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border ${
+                          className={`px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider border ${
                             survey.wouldTryIsahara === 'definitely'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : survey.wouldTryIsahara === 'probably'
-                              ? 'bg-teal-50 text-teal-700 border-teal-200'
-                              : 'bg-slate-50 text-slate-600 border-slate-200'
+                              ? 'border-neutral-900 bg-neutral-900 text-white'
+                              : 'border-neutral-300 text-neutral-700 bg-neutral-50'
                           }`}
                         >
                           {formatEnum(survey.wouldTryIsahara)}
@@ -270,44 +327,40 @@ export const AdminSurveysPage: React.FC = () => {
                       </td>
 
                       {/* Pilot Opt-in */}
-                      <td className="py-3 px-4">
+                      <td className="py-3.5 px-4 font-mono text-[11px]">
                         {survey.student?.interestedInPilot ? (
-                          <span className="text-emerald-700 font-semibold text-[11px] flex items-center gap-1">
-                            <span>✓</span> Opted In
+                          <span className="text-neutral-900 font-semibold uppercase">
+                            [ OPT-IN ]
                           </span>
                         ) : (
-                          <span className="text-slate-400 text-[11px]">No</span>
+                          <span className="text-neutral-400 uppercase">[ NO ]</span>
                         )}
                       </td>
 
                       {/* Timestamp */}
-                      <td className="py-3 px-4 text-slate-400 text-[11px]">
+                      <td className="py-3.5 px-4 font-mono text-[10px] text-neutral-400 uppercase">
                         {formatDate(survey.createdAt)}
                       </td>
 
                       {/* Actions */}
-                      <td className="py-3 px-4 text-right space-x-1">
+                      <td className="py-3.5 px-4 text-right space-x-1">
                         <button
                           type="button"
                           onClick={() => setSelectedSurvey(survey)}
-                          className="inline-flex items-center justify-center p-1.5 rounded-lg text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
-                          title="View all 12 answers"
+                          className="inline-flex items-center justify-center p-1.5 border border-neutral-300 hover:border-neutral-900 text-neutral-700 hover:text-neutral-950 transition-colors"
+                          title="Inspect all 12 telemetry responses"
                         >
-                          <Eye className="w-4 h-4" />
+                          <Eye className="w-3.5 h-3.5" />
                         </button>
 
                         <button
                           type="button"
                           onClick={() => handleDelete(survey._id)}
                           disabled={deletingId === survey._id}
-                          className="inline-flex items-center justify-center p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors disabled:opacity-50"
+                          className="inline-flex items-center justify-center p-1.5 border border-neutral-300 hover:border-rose-600 text-neutral-400 hover:text-rose-600 transition-colors disabled:opacity-50"
                           title="Delete response"
                         >
-                          {deletingId === survey._id ? (
-                            <Loader2 className="w-4 h-4 animate-spin text-rose-600" />
-                          ) : (
-                            <Trash2 className="w-4 h-4" />
-                          )}
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </td>
                     </tr>
@@ -317,10 +370,10 @@ export const AdminSurveysPage: React.FC = () => {
           </div>
 
           {/* Pagination Toolbar */}
-          <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3 bg-white text-xs text-slate-500">
+          <div className="flex items-center justify-between border-t border-neutral-300 px-4 py-3 bg-[#fcfcfc] font-mono text-[11px] text-neutral-500 uppercase tracking-wider">
             <div>
-              Showing page <span className="font-bold text-slate-900">{pagination.page}</span> of{' '}
-              <span className="font-bold text-slate-900">{pagination.totalPages}</span> ({pagination.total} total)
+              [ PAGE <span className="font-semibold text-neutral-900">{pagination.page}</span> OF{' '}
+              <span className="font-semibold text-neutral-900">{pagination.totalPages}</span> ] — {pagination.total} TOTAL RECORDS
             </div>
 
             <div className="flex items-center gap-2">
@@ -328,27 +381,27 @@ export const AdminSurveysPage: React.FC = () => {
                 type="button"
                 onClick={() => setPage((p: number) => Math.max(1, p - 1))}
                 disabled={pagination.page <= 1 || loading}
-                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2.5 py-1 text-slate-700 hover:bg-slate-50 disabled:opacity-40"
+                className="inline-flex items-center gap-1 border border-neutral-300 px-3 py-1 text-neutral-800 hover:border-neutral-900 disabled:opacity-40 disabled:hover:border-neutral-300 transition-colors"
               >
-                <ChevronLeft className="w-3.5 h-3.5" />
-                <span>Prev</span>
+                <ChevronLeft className="w-3 h-3" />
+                <span>PREV</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setPage((p: number) => Math.min(pagination.totalPages, p + 1))}
                 disabled={pagination.page >= pagination.totalPages || loading}
-                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2.5 py-1 text-slate-700 hover:bg-slate-50 disabled:opacity-40"
+                className="inline-flex items-center gap-1 border border-neutral-300 px-3 py-1 text-neutral-800 hover:border-neutral-900 disabled:opacity-40 disabled:hover:border-neutral-300 transition-colors"
               >
-                <span>Next</span>
-                <ChevronRight className="w-3.5 h-3.5" />
+                <span>NEXT</span>
+                <ChevronRight className="w-3 h-3" />
               </button>
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
-      {/* Survey Detail Inspection Modal */}
+      {/* Detail Modal */}
       <SurveyDetailModal
         survey={selectedSurvey}
         onClose={() => setSelectedSurvey(null)}

@@ -8,6 +8,7 @@ interface SurveyOptionProps {
   onSelect: () => void;
   type?: 'radio' | 'checkbox';
   description?: string;
+  theme?: 'light' | 'dark';
 }
 
 export const SurveyOption: React.FC<SurveyOptionProps> = ({
@@ -17,6 +18,7 @@ export const SurveyOption: React.FC<SurveyOptionProps> = ({
   onSelect,
   type = 'radio',
   description,
+  theme = 'light',
 }) => {
   return (
     <button
@@ -24,49 +26,76 @@ export const SurveyOption: React.FC<SurveyOptionProps> = ({
       role={type}
       aria-checked={selected}
       onClick={onSelect}
-      className={`group relative flex w-full items-center justify-between gap-4 rounded-xl border p-4 text-left transition-all duration-200 select-none ${
-        selected
-          ? 'border-emerald-600 bg-emerald-50/70 shadow-sm shadow-emerald-600/10 ring-1 ring-emerald-600'
-          : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/70'
+      className={`group relative flex w-full items-center justify-between gap-4 border p-4 text-left transition-all duration-300 ease-signature select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 cursor-pointer ${
+        theme === 'dark'
+          ? selected
+            ? 'border-white bg-white text-black shadow-sm'
+            : 'border-neutral-800 bg-[#111111] text-neutral-200 hover:border-neutral-600 hover:bg-[#161616]'
+          : selected
+          ? 'border-neutral-900 bg-neutral-900 text-white shadow-md'
+          : 'border-neutral-300 bg-white text-neutral-900 hover:border-neutral-900 hover:bg-neutral-50/80'
       }`}
     >
       <div className="flex items-center gap-3.5">
         {emoji && (
-          <span className="text-xl shrink-0 group-hover:scale-110 transition-transform">
+          <span className="text-xl shrink-0 transition-transform duration-300 group-hover:scale-110">
             {emoji}
           </span>
         )}
         <div>
           <span
-            className={`block text-base font-medium transition-colors ${
-              selected ? 'text-emerald-950 font-semibold' : 'text-slate-800'
+            className={`block text-sm md:text-[15px] font-medium tracking-tight transition-colors ${
+              selected
+                ? theme === 'dark'
+                  ? 'text-black'
+                  : 'text-white'
+                : theme === 'dark'
+                ? 'text-neutral-200'
+                : 'text-neutral-900'
             }`}
           >
             {label}
           </span>
           {description && (
-            <span className="block text-xs text-slate-500 mt-0.5">{description}</span>
+            <span
+              className={`block text-xs mt-0.5 ${
+                selected
+                  ? theme === 'dark'
+                    ? 'text-neutral-700'
+                    : 'text-neutral-300'
+                  : 'text-neutral-500'
+              }`}
+            >
+              {description}
+            </span>
           )}
         </div>
       </div>
 
-      {/* Indicator icon */}
+      {/* Check / Radio Status Indicator */}
       <div
-        className={`flex h-5 w-5 shrink-0 items-center justify-center transition-all ${
-          type === 'checkbox' ? 'rounded-md' : 'rounded-full'
+        className={`flex h-5 w-5 shrink-0 items-center justify-center transition-colors ${
+          type === 'checkbox' ? 'rounded-none' : 'rounded-full'
         } ${
           selected
-            ? 'bg-emerald-600 text-white'
-            : 'border border-slate-300 bg-white group-hover:border-slate-400'
+            ? theme === 'dark'
+              ? 'bg-black text-white'
+              : 'bg-white text-neutral-900'
+            : theme === 'dark'
+            ? 'border border-neutral-700 bg-transparent'
+            : 'border border-neutral-300 bg-transparent group-hover:border-neutral-600'
         }`}
       >
-        {selected && (
-          type === 'checkbox' ? (
+        {selected &&
+          (type === 'checkbox' ? (
             <Check className="w-3.5 h-3.5 stroke-[3]" />
           ) : (
-            <div className="w-2 h-2 rounded-full bg-white" />
-          )
-        )}
+            <div
+              className={`w-2 h-2 rounded-full ${
+                theme === 'dark' ? 'bg-white' : 'bg-neutral-900'
+              }`}
+            />
+          ))}
       </div>
     </button>
   );

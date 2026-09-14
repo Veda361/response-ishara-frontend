@@ -1,21 +1,29 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { SectionLabel } from '../components/common/SectionLabel';
+import { CTAButton } from '../components/common/CTAButton';
 
 export const NotFoundPage: React.FC = () => {
   return (
-    <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-4 py-16">
-      <span className="text-6xl mb-4">🚗💨</span>
-      <h1 className="text-3xl font-black text-slate-900 tracking-tight">404 — Page Not Found</h1>
-      <p className="mt-2 text-sm text-slate-600 max-w-sm">
-        The route you are trying to access does not exist or has moved.
+    <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-6 py-20">
+      <SectionLabel number="404" label="CORRIDOR UNRESOLVED" className="mb-4" />
+      <h1 className="text-4xl md:text-5xl font-normal text-neutral-950 tracking-tight font-sans mb-3">
+        Page Not Located
+      </h1>
+      <p className="font-mono text-xs text-neutral-500 max-w-sm uppercase tracking-wider mb-8">
+        The requested telemetry route does not exist or has been relocated.
       </p>
-      <Link
-        to="/"
-        className="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        <span>Return to Isahara Home</span>
+      <Link to="/">
+        <CTAButton
+          type="button"
+          variant="primary"
+          size="md"
+          icon={<ArrowLeft className="w-3.5 h-3.5" />}
+          iconPosition="left"
+        >
+          RETURN TO SURVEY
+        </CTAButton>
       </Link>
     </div>
   );

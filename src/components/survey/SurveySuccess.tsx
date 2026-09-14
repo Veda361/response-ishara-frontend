@@ -1,5 +1,7 @@
 import React from 'react';
-import { CheckCircle2, RotateCcw } from 'lucide-react';
+import { Check, RotateCcw } from 'lucide-react';
+import { SectionLabel } from '../common/SectionLabel';
+import { CTAButton } from '../common/CTAButton';
 
 interface SurveySuccessProps {
   onReset: () => void;
@@ -13,46 +15,51 @@ export const SurveySuccess: React.FC<SurveySuccessProps> = ({
   interestedInPilot,
 }) => {
   return (
-    <div className="mx-auto max-w-xl text-center py-12 px-4 sm:px-6">
-      <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-3xl bg-emerald-100 text-emerald-600 mb-6 shadow-md shadow-emerald-500/10">
-        <CheckCircle2 className="w-10 h-10 stroke-[2.5]" />
+    <div className="mx-auto max-w-2xl text-center py-16 px-6">
+      {/* Confirmation Indicator */}
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-neutral-900 bg-neutral-900 text-white mb-6">
+        <Check className="w-8 h-8 stroke-[2.5]" />
       </div>
 
-      <span className="inline-block rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-3">
-        Submission Confirmed
-      </span>
+      <div className="flex justify-center mb-3">
+        <SectionLabel number="REC" label="TRANSMISSION ARCHIVED" />
+      </div>
 
-      <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
-        Thank you for speaking up! 🎉
+      <h1 className="text-4xl md:text-5xl font-normal text-neutral-950 tracking-tight mb-6">
+        Insight Logged.
       </h1>
 
-      <p className="text-base text-slate-600 leading-relaxed mb-8">
-        Your response has been securely saved to the Isahara research platform.
-        {collegeName ? ` Insights from students at ${collegeName} ` : ' Your feedback '}
-        will help us design reliable, student-first mobility solutions that eliminate long waits after class.
+      <p className="text-sm md:text-base text-neutral-600 leading-relaxed max-w-xl mx-auto mb-10">
+        Your response has been secured to the Ishara transit research platform.
+        {collegeName ? ` Data from students at ${collegeName} ` : ' Your commute telemetry '}
+        directly validates wait times, bottlenecks, and the necessity of real-time student ride signals.
       </p>
 
       {interestedInPilot && (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 mb-8 text-left flex items-start gap-3">
-          <div className="text-xl">🚀</div>
-          <div>
-            <h2 className="text-sm font-bold text-emerald-900 mb-0.5">Pilot Program Opt-in Saved</h2>
-            <p className="text-xs text-emerald-800 leading-relaxed">
-              We noted your interest in testing early ride signals! When our prototype launches for your route, we will reach out with early access.
-            </p>
+        <div className="border border-neutral-300 bg-neutral-50 p-6 mb-10 text-left">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="h-2 w-2 bg-neutral-900 rounded-full" />
+            <span className="font-mono text-xs uppercase tracking-[0.2em] font-semibold text-neutral-900">
+              PILOT PROGRAM ENROLLMENT ACTIVE
+            </span>
           </div>
+          <p className="text-xs text-neutral-600 leading-relaxed">
+            Your interest in testing early route signals has been recorded. When the Ishara prototype pilot expands to your campus corridor, you will be alerted for priority access.
+          </p>
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-        <button
+      <div className="flex items-center justify-center">
+        <CTAButton
           type="button"
           onClick={onReset}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white hover:bg-slate-800 transition-colors shadow-sm"
+          variant="primary"
+          size="md"
+          icon={<RotateCcw className="w-4 h-4" />}
+          iconPosition="left"
         >
-          <RotateCcw className="w-4 h-4" />
-          <span>Submit Another Response</span>
-        </button>
+          SUBMIT ANOTHER RECORD
+        </CTAButton>
       </div>
     </div>
   );
