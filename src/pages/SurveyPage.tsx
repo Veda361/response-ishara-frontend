@@ -22,7 +22,7 @@ import type {
   BiggestProblem,
   WouldTryIsahara,
 } from '../types/survey';
-import { AlertCircle, Building2, User, GraduationCap, Phone, CheckCircle2 } from 'lucide-react';
+import { AlertCircle, Building2, User, GraduationCap, CheckCircle2 } from 'lucide-react';
 
 const STEP_LABELS = [
   'Travel Mode',
@@ -393,24 +393,6 @@ export const SurveyPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-700 mb-1.5 flex items-center gap-1.5">
-                    <Phone className="w-3.5 h-3.5 text-neutral-400" />
-                    <span>Contact <span className="text-[9px] text-neutral-400">(Optional)</span></span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. rahul@example.com or phone"
-                    value={formData.student.contact || ''}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        student: { ...formData.student, contact: e.target.value },
-                      })
-                    }
-                    className="w-full border border-neutral-300 bg-[#fcfcfc] px-4 py-2.5 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900 transition-colors"
-                  />
-                </div>
 
                 <div className="border border-neutral-200 bg-neutral-50/70 p-3.5">
                   <label className="flex items-start gap-3 cursor-pointer select-none">
