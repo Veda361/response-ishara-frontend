@@ -300,10 +300,10 @@ export const SurveyPage: React.FC = () => {
             {/* Left Headline Column */}
             <div className="lg:col-span-7 space-y-6">
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight text-neutral-950 leading-[1.08] font-sans">
-                Curated from everyday commutes &amp; discovery.
+                Getting to college shouldn&apos;t be a daily struggle.
               </h1>
               <p className="text-neutral-600 text-sm md:text-base leading-relaxed max-w-xl">
-                Step into student transit realities. Share your post-class travel friction, wait-time bottlenecks, and test the viability of real-time verified ride signals. Takes ~2 minutes.
+                Long waits, crowded rides, unpredictable traffic, and expensive trips can make every commute harder. Tell us about yours and help us build better ways for students to get around.
               </p>
 
               {/* Validation Warning */}
